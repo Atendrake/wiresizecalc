@@ -45,9 +45,20 @@
       padding: 10px;
       border: 1px solid #ddd;
     }
+    .logo {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .logo img {
+      max-width: 200px;
+    }
   </style>
 </head>
 <body>
+  <div class="logo">
+    <img src="A_digital_graphic_design_logo_for_SafeHome_Manuals.png" alt="SafeHome Manuals™ logo">
+  </div>
+
   <h1>WireSizeCalc</h1>
   <p>Calcolatore avanzato per la sezione del cavo</p>
 
@@ -122,9 +133,9 @@
       else recommended = 'Serve una sezione superiore a 6 mm²';
 
       document.getElementById('result').innerHTML =
-        `Corrente stimata: <b>${current.toFixed(2)} A</b><br>
-         Sezione minima: <b>${sectionRounded} mm²</b><br>
-         <b>${recommended}</b>`;
+        'Corrente stimata: <b>' + current.toFixed(2) + ' A</b><br>' +
+        'Sezione minima: <b>' + sectionRounded + ' mm²</b><br>' +
+        '<b>' + recommended + '</b>';
     }
   </script>
 </body>
