@@ -1,0 +1,142 @@
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WireSizeCalc - Sezione Cavo</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 480px;
+      margin: auto;
+      background: #f4f4f4;
+    }
+    h1 {
+      color: #0057b7;
+      font-size: 24px;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 15px;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      margin-bottom: 15px;
+      font-size: 16px;
+    }
+    button {
+      background-color: #0057b7;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #003f91;
+    }
+    #result {
+      font-weight: bold;
+      font-size: 18px;
+      background: white;
+      padding: 10px;
+      border: 1px solid #ddd;
+    }
+    .logo {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .logo img {
+      max-width: 200px;
+    }
+  </style>
+</head>
+<body>
+  <div class="logo">
+    <img src="A_digital_graphic_design_logo_for_SafeHome_Manuals.png" alt="SafeHome Manuals™ logo">
+  </div>
+
+  <h1>WireSizeCalc</h1>
+  <p>Calcolatore avanzato per la sezione del cavo</p>
+
+  <label for="inputType">Tipo di input:</label>
+  <select id="inputType" onchange="updateInputLabel()">
+    <option value="watt">Watt (W)</option>
+    <option value="ampere">Ampere (A)</option>
+    <option value="cv">Cavalli (CV)</option>
+  </select>
+
+  <label id="valueLabel" for="inputValue">Potenza (Watt):</label>
+  <input type="number" id="inputValue" placeholder="es. 2000">
+
+  <label for="voltage">Tensione (Volt):</label>
+  <select id="voltage">
+    <option value="230">230 V</option>
+    <option value="400">400 V</option>
+  </select>
+
+  <label for="length">Lunghezza cavo (m):</label>
+  <input type="number" id="length" placeholder="es. 20">
+
+  <label for="material">Materiale:</label>
+  <select id="material">
+    <option value="0.0178">Rame</option>
+    <option value="0.0282">Alluminio</option>
+  </select>
+
+  <button onclick="calculate()">Calcola sezione consigliata</button>
+
+  <div id="result"></div>
+
+  <script>
+    function updateInputLabel() {
+      const type = document.getElementById('inputType').value;
+      const label = document.getElementById('valueLabel');
+      if (type === 'watt') label.innerText = "Potenza (Watt):";
+      else if (type === 'ampere') label.innerText = "Corrente (Ampere):";
+      else if (type === 'cv') label.innerText = "Potenza (Cavalli vapore - CV):";
+    }
+
+    function calculate() {
+      const inputType = document.getElementById('inputType').value;
+      const inputValue = parseFloat(document.getElementById('inputValue').value);
+      const voltage = parseFloat(document.getElementById('voltage').value);
+      const length = parseFloat(document.getElementById('length').value);
+      const resistivity = parseFloat(document.getElementById('material').value);
+
+      if (isNaN(inputValue) || isNaN(voltage) || isNaN(length)) {
+        document.getElementById('result').innerText = 'Inserisci tutti i valori.';
+        return;
+      }
+
+      let current;
+      if (inputType === 'watt') {
+        current = inputValue / voltage;
+      } else if (inputType === 'ampere') {
+        current = inputValue;
+      } else if (inputType === 'cv') {
+        const watts = inputValue * 735.5;
+        current = watts / voltage;
+      }
+
+      const section = (2 * resistivity * length * current) / 3;
+      const sectionRounded = Math.ceil(section * 100) / 100;
+
+      let recommended = '';
+      if (sectionRounded <= 1.5) recommended = 'Usa almeno 1.5 mm²';
+      else if (sectionRounded <= 2.5) recommended = 'Usa almeno 2.5 mm²';
+      else if (sectionRounded <= 4) recommended = 'Usa almeno 4 mm²';
+      else if (sectionRounded <= 6) recommended = 'Usa almeno 6 mm²';
+      else recommended = 'Serve una sezione superiore a 6 mm²';
+
+      document.getElementById('result').innerHTML =
+        'Corrente stimata: <b>' + current.toFixed(2) + ' A</b><br>' +
+        'Sezione minima: <b>' + sectionRounded + ' mm²</b><br>' +
+        '<b>' + recommended + '</b>';
+    }
+  </script>
+</body>
+</html>
