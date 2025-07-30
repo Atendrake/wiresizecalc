@@ -200,24 +200,5 @@
         '<b>' + recommended + '</b>';
     }
   </script>
-
-  <div id="ads-box" style="margin-top: 30px;"></div>
-<script>
-const prodotti = [
-  { title: 'Tester di tensione professionale', link: 'https://amzn.to/46u5FHB' },
-  { title: 'Forbici da elettricista isolate', link: 'https://amzn.to/3ITjuWc' },
-  { title: 'Cercafase senza contatto', link: 'https://amzn.to/45jueF4' },
-  { title: 'Set cacciaviti isolati 1000V', link: 'https://amzn.to/4l1aiMQ' },
-  { title: 'Morsetti a leva (WAGO-style)', link: 'https://amzn.to/4mhr9Ml' },
-  { title: 'Nastro isolante professionale', link: 'https://amzn.to/3HaF4F4' },
-];
-const prodotto = prodotti[Math.floor(Math.random() * prodotti.length)];
-document.getElementById("ads-box").innerHTML = `
-  <div style="border: 1px solid #ddd; padding: 12px; background: #fff; text-align: center;">
-    <strong>🔌 ${prodotto.title}</strong><br>
-    <a href="${prodotto.link}" target="_blank" style="display:inline-block;margin-top:8px;color:#0057b7;">Acquista su Amazon</a>
-  </div>
-`;
-</script>
 </body>
 </html>
