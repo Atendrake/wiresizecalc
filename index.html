@@ -4,25 +4,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>WireSizeCalc - Sezione Cavo</title>
+  <title>WireSizeCalc - Multi</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       padding: 20px;
-      max-width: 480px;
+      max-width: 520px;
       margin: auto;
       background: #f4f4f4;
     }
-    h1 {
-      color: #0057b7;
-      font-size: 24px;
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-    label {
-      font-weight: bold;
-      display: block;
-      margin-top: 15px;
-    }
-    input, select, button {
+    select, input, button {
       width: 100%;
       padding: 10px;
       margin-top: 5px;
@@ -47,10 +43,10 @@
     }
     .logo {
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
     }
     .logo img {
-      max-width: 200px;
+      max-width: 180px;
     }
   </style>
 </head>
@@ -59,45 +55,103 @@
     <img src="A_digital_graphic_design_logo_for_SafeHome_Manuals.png" alt="SafeHome Manuals™ logo">
   </div>
 
-  <h1>WireSizeCalc</h1>
-  <p>Calcolatore avanzato per la sezione del cavo</p>
+  <div class="topbar">
+    <h1 id="title">WireSizeCalc</h1>
+    <select id="language" onchange="setLanguage()">
+      <option value="it">🇮🇹</option>
+      <option value="en">🇬🇧</option>
+    </select>
+  </div>
 
-  <label for="inputType">Tipo di input:</label>
+  <label id="inputTypeLabel">Tipo di input:</label>
   <select id="inputType" onchange="updateInputLabel()">
     <option value="watt">Watt (W)</option>
     <option value="ampere">Ampere (A)</option>
     <option value="cv">Cavalli (CV)</option>
   </select>
 
-  <label id="valueLabel" for="inputValue">Potenza (Watt):</label>
+  <label id="valueLabel">Potenza (Watt):</label>
   <input type="number" id="inputValue" placeholder="es. 2000">
 
-  <label for="voltage">Tensione (Volt):</label>
+  <label id="voltageLabel">Tensione (Volt):</label>
   <select id="voltage">
     <option value="230">230 V</option>
     <option value="400">400 V</option>
   </select>
 
-  <label for="length">Lunghezza cavo (m):</label>
+  <label id="lengthLabel">Lunghezza cavo (m):</label>
   <input type="number" id="length" placeholder="es. 20">
 
-  <label for="material">Materiale:</label>
+  <label id="dropLabel">Caduta di tensione ammessa:</label>
+  <select id="drop">
+    <option value="1">1%</option>
+    <option value="2">2%</option>
+    <option value="3" selected>3%</option>
+    <option value="4">4%</option>
+    <option value="5">5%</option>
+  </select>
+
+  <label id="layingLabel">Tipo di posa:</label>
+  <select id="laying">
+    <option value="1">In aria</option>
+    <option value="0.9">In tubo</option>
+    <option value="0.8">Interrato</option>
+  </select>
+
+  <label id="materialLabel">Materiale:</label>
   <select id="material">
     <option value="0.0178">Rame</option>
     <option value="0.0282">Alluminio</option>
   </select>
 
   <button onclick="calculate()">Calcola sezione consigliata</button>
-
   <div id="result"></div>
 
   <script>
+    const labels = {
+      it: {
+        title: "WireSizeCalc",
+        inputTypeLabel: "Tipo di input:",
+        valueLabel: "Potenza (Watt):",
+        voltageLabel: "Tensione (Volt):",
+        lengthLabel: "Lunghezza cavo (m):",
+        dropLabel: "Caduta di tensione ammessa:",
+        layingLabel: "Tipo di posa:",
+        materialLabel: "Materiale:"
+      },
+      en: {
+        title: "WireSizeCalc",
+        inputTypeLabel: "Input type:",
+        valueLabel: "Power (Watt):",
+        voltageLabel: "Voltage (Volt):",
+        lengthLabel: "Cable length (m):",
+        dropLabel: "Allowed voltage drop:",
+        layingLabel: "Cable laying type:",
+        materialLabel: "Material:"
+      }
+    };
+
+    function setLanguage() {
+      const lang = document.getElementById('language').value;
+      for (let id in labels[lang]) {
+        document.getElementById(id).innerText = labels[lang][id];
+      }
+      updateInputLabel();
+    }
+
     function updateInputLabel() {
       const type = document.getElementById('inputType').value;
+      const lang = document.getElementById('language').value;
       const label = document.getElementById('valueLabel');
-      if (type === 'watt') label.innerText = "Potenza (Watt):";
-      else if (type === 'ampere') label.innerText = "Corrente (Ampere):";
-      else if (type === 'cv') label.innerText = "Potenza (Cavalli vapore - CV):";
+      if (lang === 'it') {
+        if (type === 'watt') label.innerText = "Potenza (Watt):";
+        else if (type === 'ampere') label.innerText = "Corrente (Ampere):";
+        else label.innerText = "Potenza (Cavalli vapore - CV):";
+      } else {
+        if (type === 'watt') label.innerText = "Power (Watt):";
+        else if (type === 'ampere') label.innerText = "Current (Ampere):";
+        else label.innerText = "Power (Horsepower - HP):";
+      }
     }
 
     function calculate() {
@@ -105,6 +159,8 @@
       const inputValue = parseFloat(document.getElementById('inputValue').value);
       const voltage = parseFloat(document.getElementById('voltage').value);
       const length = parseFloat(document.getElementById('length').value);
+      const drop = parseFloat(document.getElementById('drop').value);
+      const laying = parseFloat(document.getElementById('laying').value);
       const resistivity = parseFloat(document.getElementById('material').value);
 
       if (isNaN(inputValue) || isNaN(voltage) || isNaN(length)) {
@@ -117,12 +173,13 @@
         current = inputValue / voltage;
       } else if (inputType === 'ampere') {
         current = inputValue;
-      } else if (inputType === 'cv') {
+      } else {
         const watts = inputValue * 735.5;
         current = watts / voltage;
       }
 
-      const section = (2 * resistivity * length * current) / 3;
+      const deltaV = voltage * (drop / 100);
+      const section = (2 * resistivity * length * current) / (deltaV * laying);
       const sectionRounded = Math.ceil(section * 100) / 100;
 
       let recommended = '';
