@@ -49,10 +49,17 @@
 </head>
 <body>
   <h1>WireSizeCalc</h1>
-  <p>Calcolatore base per la sezione del cavo</p>
+  <p>Calcolatore avanzato per la sezione del cavo</p>
 
-  <label for="power">Potenza (Watt):</label>
-  <input type="number" id="power" placeholder="es. 2000">
+  <label for="inputType">Tipo di input:</label>
+  <select id="inputType" onchange="updateInputLabel()">
+    <option value="watt">Watt (W)</option>
+    <option value="ampere">Ampere (A)</option>
+    <option value="cv">Cavalli (CV)</option>
+  </select>
+
+  <label id="valueLabel" for="inputValue">Potenza (Watt):</label>
+  <input type="number" id="inputValue" placeholder="es. 2000">
 
   <label for="voltage">Tensione (Volt):</label>
   <select id="voltage">
@@ -74,20 +81,37 @@
   <div id="result"></div>
 
   <script>
+    function updateInputLabel() {
+      const type = document.getElementById('inputType').value;
+      const label = document.getElementById('valueLabel');
+      if (type === 'watt') label.innerText = "Potenza (Watt):";
+      else if (type === 'ampere') label.innerText = "Corrente (Ampere):";
+      else if (type === 'cv') label.innerText = "Potenza (Cavalli vapore - CV):";
+    }
+
     function calculate() {
-      const power = parseFloat(document.getElementById('power').value);
+      const inputType = document.getElementById('inputType').value;
+      const inputValue = parseFloat(document.getElementById('inputValue').value);
       const voltage = parseFloat(document.getElementById('voltage').value);
       const length = parseFloat(document.getElementById('length').value);
       const resistivity = parseFloat(document.getElementById('material').value);
 
-      if (isNaN(power) || isNaN(voltage) || isNaN(length)) {
+      if (isNaN(inputValue) || isNaN(voltage) || isNaN(length)) {
         document.getElementById('result').innerText = 'Inserisci tutti i valori.';
         return;
       }
 
-      const current = power / voltage;
-      const section = (2 * resistivity * length * current) / (3); // ΔV max 3V
+      let current;
+      if (inputType === 'watt') {
+        current = inputValue / voltage;
+      } else if (inputType === 'ampere') {
+        current = inputValue;
+      } else if (inputType === 'cv') {
+        const watts = inputValue * 735.5;
+        current = watts / voltage;
+      }
 
+      const section = (2 * resistivity * length * current) / 3;
       const sectionRounded = Math.ceil(section * 100) / 100;
 
       let recommended = '';
