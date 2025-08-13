@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calcolatore Potenza ↔ Corrente | SafeHome Manuals™</title>
+
+  <!-- SEO -->
+  <meta name="description" content="Calcola rapidamente Potenza, Corrente o Tensione. Inserisci due valori e ottieni il terzo. Gratuito, preciso e ottimizzato per mobile. SafeHome Manuals™." />
+  <meta name="keywords" content="calcolatore potenza corrente, P=VI, legge di ohm, elettricità, strumenti elettrici, fai-da-te, electrical calculator, power current voltage" />
+  <link rel="canonical" href="https://safehome-manuals.example/calcolatore-potenza-corrente.html" />
+
+  <!-- Optional external brand stylesheet (if present, it will override some defaults) -->
+  <link rel="stylesheet" href="safehome.css" />
+
+  <style>
+    :root{
+      --brand-bg: #F7F3EB;       /* warm beige */
+      --brand-primary: #0A2C54;  /* deep navy */
+      --brand-accent: #F2B705;   /* amber */
+      --brand-text: #1F2937;     /* slate */
+      --card-bg: #FFFFFF;
+      --muted: #6B7280;
+      --radius: 14px;
+      --shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--brand-text);
+      background:var(--brand-bg);
+    }
+
+    /* Fixed header */
+    .header{
+      position: sticky;
+      top:0;
+      z-index:10;
+      background: linear-gradient(0deg, rgba(255,255,255,0.85), rgba(255,255,255,0.95));
+      backdrop-filter: blur(6px);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+    .header-inner{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 12px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      text-decoration:none;
+      color:var(--brand-primary);
+      font-weight:700;
+      letter-spacing: .2px;
+    }
+    .brand img{
+      width:32px; height:32px; object-fit:contain;
+    }
+    .lang-toggle{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      background:var(--card-bg);
+      border:1px solid rgba(0,0,0,0.08);
+      padding:8px 12px;
+      border-radius:999px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      cursor:pointer;
+      font-weight:600;
+      color:var(--brand-primary);
+    }
+
+    /* Main */
+    .wrap{
+      max-width: 980px;
+      margin: 28px auto 48px;
+      padding: 0 16px;
+    }
+    .hero{
+      margin-top: 12px;
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap:24px;
+    }
+    @media (max-width: 860px){
+      .hero{ grid-template-columns: 1fr; }
+    }
+
+    .card{
+      background:var(--card-bg);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:22px;
+    }
+    .title{
+      margin:0 0 8px 0;
+      font-size: clamp(22px, 2.6vw, 30px);
+      color:var(--brand-primary);
+      font-weight:800;
+      letter-spacing:.2px;
+    }
+    .subtitle{
+      margin:0 0 18px 0;
+      color:var(--muted);
+      font-size:14px;
+    }
+    .badges{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom: 10px; }
+    .badge{
+      background: #FFF7DF;
+      color:#6B4A00;
+      border:1px solid #FBE29A;
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:700;
+    }
+
+    /* Form */
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:14px;
+    }
+    @media (max-width:600px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+    label{
+      font-size:13px;
+      color:var(--brand-primary);
+      font-weight:700;
+      margin-bottom:6px;
+      display:block;
+    }
+    .field{
+      display:flex;
+      flex-direction:column;
+    }
+    input[type="number"]{
+      appearance: textfield;
+    }
+    input, select{
+      width:100%;
+      padding:12px 12px;
+      border:1px solid rgba(0,0,0,0.12);
+      border-radius:10px;
+      font-size:16px;
+      background:#fff;
+    }
+    .hint{ font-size:12px; color:var(--muted); margin-top:6px; }
+
+    .actions{ display:flex; gap:10px; margin-top:16px; flex-wrap:wrap; }
+    .btn{
+      border:none;
+      border-radius:10px;
+      padding:12px 16px;
+      font-weight:800;
+      cursor:pointer;
+    }
+    .btn-primary{
+      background:var(--brand-primary);
+      color:#fff;
+    }
+    .btn-primary:hover{ filter:brightness(1.05); }
+    .btn-ghost{
+      background:#ffffff;
+      color:var(--brand-primary);
+      border:1px solid rgba(0,0,0,0.12);
+    }
+
+    .result{
+      margin-top:16px;
+      background:#F6FAFF;
+      border:1px solid #CFE6FF;
+      color:#05305F;
+      padding:14px;
+      border-radius:10px;
+      font-weight:800;
+      font-size:18px;
+      display:none;
+    }
+
+    .aside{
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+    }
+    .aside .tile{
+      background:#fff;
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:18px;
+    }
+    .tile h3{
+      margin:0 0 8px 0;
+      font-size:16px;
+      color:var(--brand-primary);
+    }
+    .list{ margin:0; padding-left:18px; }
+    .list li{ margin:6px 0; color:var(--brand-text); }
+
+    footer{
+      margin:40px auto 28px;
+      max-width:980px;
+      padding:0 16px;
+      color:var(--muted);
+      font-size:12px;
+      text-align:center;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-inner">
+      <a class="brand" href="#">
+        <!-- Replace src with your logo path -->
+        <img src="logo-safehome.png" alt="SafeHome Manuals logo" />
+        <span>SafeHome Manuals™</span>
+      </a>
+      <button id="langBtn" class="lang-toggle" aria-label="Change language">ITA ▾</button>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <!-- Calculator Card -->
+      <div class="card">
+        <h1 class="title" data-i18n="title">Calcolatore Potenza ↔ Corrente</h1>
+        <p class="subtitle" data-i18n="subtitle">Inserisci due valori e ottieni il terzo. Veloce, preciso, gratis.</p>
+        <div class="badges">
+          <span class="badge" data-i18n="badge_fast">Veloce</span>
+          <span class="badge" data-i18n="badge_precise">Preciso</span>
+          <span class="badge" data-i18n="badge_free">Gratis</span>
+        </div>
+
+        <div class="grid">
+          <div class="field">
+            <label for="power" data-i18n="label_power">Potenza (W)</label>
+            <input type="number" id="power" placeholder="1000" inputmode="decimal" />
+            <div class="hint" data-i18n="hint_power">Esempio: 1500 W</div>
+          </div>
+
+          <div class="field">
+            <label for="voltage" data-i18n="label_voltage">Tensione (V)</label>
+            <input type="number" id="voltage" placeholder="230" inputmode="decimal" />
+            <div class="hint" data-i18n="hint_voltage">Esempio: 230 V</div>
+          </div>
+
+          <div class="field">
+            <label for="current" data-i18n="label_current">Corrente (A)</label>
+            <input type="number" id="current" placeholder="4.35" inputmode="decimal" />
+            <div class="hint" data-i18n="hint_current">Esempio: 4.35 A</div>
+          </div>
+
+          <div class="field">
+            <label for="phase" data-i18n="label_phase">Fase</label>
+            <select id="phase">
+              <option value="single" selected data-i18n="opt_single">Monofase (AC)</option>
+              <option value="three" data-i18n="opt_three">Trifase (AC)</option>
+              <option value="dc" data-i18n="opt_dc">Corrente continua (DC)</option>
+            </select>
+            <div class="hint" data-i18n="hint_phase">Per trifase si usa P = √3 · V · I</div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-primary" id="calcBtn" data-i18n="btn_calc">Calcola</button>
+          <button class="btn btn-ghost" id="resetBtn" data-i18n="btn_reset">Reset</button>
+        </div>
+
+        <div id="result" class="result" aria-live="polite"></div>
+      </div>
+
+      <!-- Side info -->
+      <aside class="aside">
+        <div class="tile">
+          <h3 data-i18n="tile_how">Come funziona</h3>
+          <ul class="list">
+            <li data-i18n="how_1">Inserisci <b>due</b> valori tra Potenza, Tensione, Corrente.</li>
+            <li data-i18n="how_2">Seleziona il tipo di circuito (Monofase, Trifase o DC).</li>
+            <li data-i18n="how_3">Clicca <b>Calcola</b> per ottenere il terzo valore.</li>
+          </ul>
+        </div>
+        <div class="tile">
+          <h3 data-i18n="tile_formula">Formule</h3>
+          <ul class="list">
+            <li data-i18n="f_single">Monofase AC: <b>P = V · I</b></li>
+            <li data-i18n="f_three">Trifase AC: <b>P = √3 · V · I</b></li>
+            <li data-i18n="f_dc">DC: <b>P = V · I</b></li>
+          </ul>
+        </div>
+        <div class="tile">
+          <h3 data-i18n="tile_tip">Suggerimento</h3>
+          <p class="hint" data-i18n="tip_text">Per risultati realistici considera il fattore di potenza se necessario. Questo calcolatore assume cosφ ≈ 1.</p>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <footer>
+    <span>&copy; <span id="year"></span> SafeHome Manuals™ – <span data-i18n="foot_rights">Tutti i diritti riservati.</span></span>
+  </footer>
+
+  <script>
+    // i18n content
+    const dict = {
+      it: {
+        title: "Calcolatore Potenza ↔ Corrente",
+        subtitle: "Inserisci due valori e ottieni il terzo. Veloce, preciso, gratis.",
+        badge_fast: "Veloce",
+        badge_precise: "Preciso",
+        badge_free: "Gratis",
+        label_power: "Potenza (W)",
+        label_voltage: "Tensione (V)",
+        label_current: "Corrente (A)",
+        label_phase: "Fase",
+        opt_single: "Monofase (AC)",
+        opt_three: "Trifase (AC)",
+        opt_dc: "Corrente continua (DC)",
+        hint_power: "Esempio: 1500 W",
+        hint_voltage: "Esempio: 230 V",
+        hint_current: "Esempio: 4.35 A",
+        hint_phase: "Per trifase si usa P = √3 · V · I",
+        btn_calc: "Calcola",
+        btn_reset: "Reset",
+        tile_how: "Come funziona",
+        how_1: "Inserisci <b>due</b> valori tra Potenza, Tensione, Corrente.",
+        how_2: "Seleziona il tipo di circuito (Monofase, Trifase o DC).",
+        how_3: "Clicca <b>Calcola</b> per ottenere il terzo valore.",
+        tile_formula: "Formule",
+        f_single: "Monofase AC: <b>P = V · I</b>",
+        f_three: "Trifase AC: <b>P = √3 · V · I</b>",
+        f_dc: "DC: <b>P = V · I</b>",
+        tile_tip: "Suggerimento",
+        tip_text: "Per risultati realistici considera il fattore di potenza se necessario. Questo calcolatore assume cosφ ≈ 1.",
+        foot_rights: "Tutti i diritti riservati.",
+        result_power: v => `Potenza: ${v.toFixed(2)} W`,
+        result_current: v => `Corrente: ${v.toFixed(2)} A`,
+        result_voltage: v => `Tensione: ${v.toFixed(2)} V`,
+        need_two: "Inserisci due valori per calcolare il terzo."
+      },
+      en: {
+        title: "Power ↔ Current Calculator",
+        subtitle: "Enter any two values to get the third. Fast, accurate, free.",
+        badge_fast: "Fast",
+        badge_precise: "Accurate",
+        badge_free: "Free",
+        label_power: "Power (W)",
+        label_voltage: "Voltage (V)",
+        label_current: "Current (A)",
+        label_phase: "Phase",
+        opt_single: "Single-phase (AC)",
+        opt_three: "Three-phase (AC)",
+        opt_dc: "Direct current (DC)",
+        hint_power: "Example: 1500 W",
+        hint_voltage: "Example: 120 / 230 V",
+        hint_current: "Example: 4.35 A",
+        hint_phase: "For three-phase P = √3 · V · I",
+        btn_calc: "Calculate",
+        btn_reset: "Reset",
+        tile_how: "How it works",
+        how_1: "Enter <b>two</b> values among Power, Voltage, Current.",
+        how_2: "Select the circuit type (Single-phase, Three-phase or DC).",
+        how_3: "Click <b>Calculate</b> to get the third value.",
+        tile_formula: "Formulas",
+        f_single: "Single-phase AC: <b>P = V · I</b>",
+        f_three: "Three-phase AC: <b>P = √3 · V · I</b>",
+        f_dc: "DC: <b>P = V · I</b>",
+        tile_tip: "Tip",
+        tip_text: "For realistic results consider power factor if needed. This calculator assumes cosφ ≈ 1.",
+        foot_rights: "All rights reserved.",
+        result_power: v => `Power: ${v.toFixed(2)} W`,
+        result_current: v => `Current: ${v.toFixed(2)} A`,
+        result_voltage: v => `Voltage: ${v.toFixed(2)} V`,
+        need_two: "Enter any two values to calculate the third."
+      }
+    };
+
+    const $ = sel => document.querySelector(sel);
+    const $$ = sel => document.querySelectorAll(sel);
+
+    const powerEl = $('#power');
+    const voltEl  = $('#voltage');
+    const currEl  = $('#current');
+    const phaseEl = $('#phase');
+    const resultEl= $('#result');
+    const calcBtn = $('#calcBtn');
+    const resetBtn= $('#resetBtn');
+    const langBtn = $('#langBtn');
+
+    // Language handling
+    const applyLang = (lng) => {
+      const strings = dict[lng] || dict.it;
+      document.documentElement.lang = lng === 'en' ? 'en' : 'it';
+      // Swap text nodes with data-i18n
+      $$('[data-i18n]').forEach(node => {
+        const key = node.getAttribute('data-i18n');
+        const val = strings[key];
+        if(typeof val === 'string'){
+          node.innerHTML = val;
+        }
+      });
+      // Button label
+      langBtn.textContent = (lng === 'en') ? 'ENG ▾' : 'ITA ▾';
+      // Update placeholders/hints that are not data-i18n functions
+      powerEl.placeholder = (lng === 'en') ? '1000' : '1000';
+      voltEl.placeholder  = (lng === 'en') ? '120 / 230' : '230';
+      currEl.placeholder  = (lng === 'en') ? '4.35' : '4.35';
+      // Persist
+      localStorage.setItem('safehome_lang', lng);
+      // Update title/description for SEO (non-critical at runtime but nice to have)
+      document.title = (lng === 'en')
+        ? 'Power ↔ Current Calculator | SafeHome Manuals™'
+        : 'Calcolatore Potenza ↔ Corrente | SafeHome Manuals™';
+      document.querySelector('meta[name="description"]').setAttribute(
+        'content',
+        (lng === 'en')
+          ? 'Quickly compute Power, Current or Voltage. Enter any two values to get the third. Free, accurate and mobile-optimized. SafeHome Manuals™.'
+          : 'Calcola rapidamente Potenza, Corrente o Tensione. Inserisci due valori e ottieni il terzo. Gratuito, preciso e ottimizzato per mobile. SafeHome Manuals™.'
+      );
+    };
+
+    const toggleLang = () => {
+      const cur = localStorage.getItem('safehome_lang') || 'it';
+      applyLang(cur === 'it' ? 'en' : 'it');
+    };
+
+    langBtn.addEventListener('click', toggleLang);
+
+    // Calculation logic
+    function parseVal(el){
+      const v = parseFloat(el.value.replace(',', '.'));
+      return isNaN(v) ? null : v;
+    }
+
+    function calculate(){
+      const P = parseVal(powerEl);
+      const V = parseVal(voltEl);
+      const I = parseVal(currEl);
+      const mode = phaseEl.value; // single | three | dc
+
+      const lng = localStorage.getItem('safehome_lang') || 'it';
+      const t = dict[lng];
+
+      let res = '';
+      const sqrt3 = Math.sqrt(3);
+
+      // Determine which to compute: need exactly 2 knowns
+      const known = [P!==null, V!==null, I!==null].filter(Boolean).length;
+      if(known !== 2){
+        resultEl.style.display = 'block';
+        resultEl.innerText = t.need_two;
+        return;
+      }
+
+      if(P === null && V !== null && I !== null){
+        // compute Power
+        let calcP = (mode === 'three') ? sqrt3 * V * I : V * I;
+        res = t.result_power(calcP);
+      } else if(I === null && V !== null && P !== null){
+        // compute Current
+        let calcI = (mode === 'three') ? (P / (sqrt3 * V)) : (P / V);
+        res = t.result_current(calcI);
+      } else if(V === null && P !== null && I !== null){
+        // compute Voltage
+        let calcV = (mode === 'three') ? (P / (sqrt3 * I)) : (P / I);
+        res = t.result_voltage(calcV);
+      } else {
+        res = t.need_two;
+      }
+
+      resultEl.style.display = 'block';
+      resultEl.innerHTML = res;
+    }
+
+    function resetAll(){
+      powerEl.value = '';
+      voltEl.value  = '';
+      currEl.value  = '';
+      resultEl.style.display = 'none';
+      resultEl.innerHTML = '';
+    }
+
+    calcBtn.addEventListener('click', calculate);
+    resetBtn.addEventListener('click', resetAll);
+
+    // Prefill from URL params (optional convenience)
+    const params = new URLSearchParams(location.search);
+    if(params.has('lang')){
+      localStorage.setItem('safehome_lang', params.get('lang') === 'en' ? 'en' : 'it');
+    }
+    const initialLang = localStorage.getItem('safehome_lang') || 'it';
+    applyLang(initialLang);
+
+    // Footer year
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
